@@ -26,8 +26,10 @@ def init_db():
             "INSERT INTO users (username, password, display_name) VALUES (?, ?, ?)",
             [
                 ("admin", "admin123", "システム管理者"),
-                ("alice", "wonderland", "Alice"),
-                ("bob", "builder", "Bob"),
+                ("yamada", "taro123", "山田 太郎"),
+                ("sato", "hanako123", "佐藤 花子"),
+                ("zawa", "zawa123", "黒澤 亮太"),
+                ("haruto", "haru123", "岡村 悠杜"),
             ],
         )
         conn.commit()
