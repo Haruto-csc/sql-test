@@ -233,7 +233,7 @@ def dashboard_page(display_name="", username=""):
           <div class="card admin-card">
             <h3>📊 器具・プロテイン売上レポート</h3>
             <p>本日の売上高: ¥2,450,000<br>一番売れている商品: ホエイプロテイン WPI 1kg</p>
-            <a href="#" class="btn btn-outline">詳細レポートを開く</a>
+            <a href="/admin/sales" class="btn btn-outline">詳細レポートを開く</a>
           </div>
           <div class="card admin-card">
             <h3>👥 メンバーデータベース</h3>
@@ -243,7 +243,7 @@ def dashboard_page(display_name="", username=""):
           <div class="card admin-card">
             <h3>📦 在庫管理アラート</h3>
             <p style="color: #ea580c; font-weight: bold;">⚠️ アジャスタブルダンベル 32kg の在庫が残り3セットです。</p>
-            <a href="#" class="btn btn-outline">発注システムを開く</a>
+            <a href="/admin/inventory" class="btn btn-outline">在庫アラートを開く</a>
           </div>
         </div>
         """
@@ -263,7 +263,7 @@ def dashboard_page(display_name="", username=""):
             <h3>ホエイプロテイン WPI 1kg (ダブルリッチチョコレート味)</h3>
             <p>高純度のWPIを採用。吸収速度に優れ、激しいトレーニング後のタンパク質補給に最適です。</p>
             <div class="price">¥4,980</div>
-            <button class="btn-primary">カートに入れる</button>
+            <a href="/cart?item=%E3%83%9B%E3%82%A8%E3%82%A4%E3%83%97%E3%83%AD%E3%83%86%E3%82%A4%E3%83%B3+WPI+1kg+%28%E3%83%80%E3%83%96%E3%83%AB%E3%83%AA%E3%83%83%E3%83%81%E3%83%81%E3%83%A7%E3%82%B3%E3%83%AC%E3%83%BC%E3%83%88%E5%91%B3%29&price=%C2%A54%2C980" class="btn-primary" style="display:block;text-decoration:none;text-align:center;">カートに入れる</a>
           </div>
 
           <!-- ダンベル -->
@@ -272,7 +272,7 @@ def dashboard_page(display_name="", username=""):
             <h3>アジャスタブルダンベル 32kg × 2個セット</h3>
             <p>ダイヤルを回すだけで2kg〜32kgまで簡単に重量変更が可能。ホームジムの必須アイテム。</p>
             <div class="price">¥34,800</div>
-            <button class="btn-primary">カートに入れる</button>
+            <a href="/cart?item=%E3%82%A2%E3%82%B8%E3%83%A3%E3%82%B9%E3%82%BF%E3%83%96%E3%83%AB%E3%83%80%E3%83%B3%E3%83%99%E3%83%AB+32kg+%C3%97+2%E5%80%8B%E3%82%BB%E3%83%83%E3%83%88&price=%C2%A534%2C800" class="btn-primary" style="display:block;text-decoration:none;text-align:center;">カートに入れる</a>
           </div>
 
           <!-- マシン/ラック -->
@@ -281,16 +281,16 @@ def dashboard_page(display_name="", username=""):
             <h3>ハーフラック スタンダードモデル (耐荷重300kg)</h3>
             <p>スクワット、ベンチプレスなどビッグ3に完全対応。極太フレームで安定感抜群のラックです。</p>
             <div class="price">¥89,000</div>
-            <button class="btn-primary">大型配送・カートに入れる</button>
+            <a href="/cart?item=%E3%83%8F%E3%83%BC%E3%83%95%E3%83%A9%E3%83%83%E3%82%AF+%E3%82%B9%E3%82%BF%E3%83%B3%E3%83%80%E3%83%BC%E3%83%89%E3%83%A2%E3%83%87%E3%83%AB+%28%E8%80%90%E8%8D%B7%E9%87%8D300kg%29&price=%C2%A589%2C000" class="btn-primary" style="display:block;text-decoration:none;text-align:center;">大型配送・カートに入れる</a>
           </div>
-          
+
           <!-- アクセサリー -->
           <div class="card product-card">
             <div class="emoji-img">🧤</div>
             <h3>本革パワーグリップ PRO</h3>
             <p>デッドリフトや懸垂時の握力サポートに。背中トレの質を劇的に向上させるマストアイテム。</p>
             <div class="price">¥6,500</div>
-            <button class="btn-primary">カートに入れる</button>
+            <a href="/cart?item=%E6%9C%AC%E9%9D%B4%E3%83%91%E3%83%AF%E3%83%BC%E3%82%B0%E3%83%AA%E3%83%83%E3%83%97+PRO&price=%C2%A56%2C500" class="btn-primary" style="display:block;text-decoration:none;text-align:center;">カートに入れる</a>
           </div>
         </div>
         """
@@ -663,6 +663,475 @@ def admin_db_page(users_data, display_name=""):
 </html>"""
 
 
+def cart_page(item_name="", price="", display_name=""):
+    escaped_display_name = html.escape(display_name)
+    escaped_item = html.escape(item_name)
+    escaped_price = html.escape(price)
+    return f"""<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>購入手続き - MuscleMart</title>
+  <style>
+    :root {{--primary:#ea580c;--primary-hover:#c2410c;--bg:#f9fafb;--text:#1f2937;--border:#e5e7eb;}}
+    *{{box-sizing:border-box;}}
+    body{{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;}}
+    header{{background:#111827;padding:1rem 0;}}
+    .container{{max-width:700px;margin:0 auto;padding:0 1rem;}}
+    .header-inner{{display:flex;justify-content:space-between;align-items:center;}}
+    .logo{{font-size:1.5rem;font-weight:900;color:#fff;text-decoration:none;letter-spacing:1px;text-transform:uppercase;font-style:italic;}}
+    .logo span{{color:var(--primary);}}
+    main{{padding:3rem 1rem;min-height:calc(100vh - 160px);}}
+    .card{{background:#fff;border:1px solid var(--border);border-radius:8px;padding:2rem;box-shadow:0 2px 4px rgba(0,0,0,0.05);margin-bottom:1.5rem;}}
+    h2{{margin:0 0 1.5rem;font-size:1.4rem;color:#111827;border-bottom:2px solid var(--border);padding-bottom:0.8rem;}}
+    .item-row{{display:flex;justify-content:space-between;align-items:center;padding:1rem 0;border-bottom:1px solid var(--border);}}
+    .item-name{{font-weight:700;font-size:1.05rem;}}
+    .item-price{{font-size:1.3rem;font-weight:800;color:#b91c1c;}}
+    .form-group{{margin-bottom:1.2rem;}}
+    label{{display:block;margin-bottom:0.4rem;font-size:0.9rem;font-weight:700;color:#374151;}}
+    input[type="text"]{{width:100%;padding:0.7rem;border:2px solid #e5e7eb;border-radius:6px;font-size:1rem;}}
+    input:focus{{outline:none;border-color:var(--primary);}}
+    .total-row{{display:flex;justify-content:space-between;padding:1rem 0;font-size:1.1rem;font-weight:800;}}
+    .btn-submit{{width:100%;padding:1rem;background:var(--primary);color:#fff;border:none;border-radius:6px;font-size:1.1rem;font-weight:800;cursor:pointer;text-transform:uppercase;letter-spacing:1px;}}
+    .btn-submit:hover{{background:var(--primary-hover);}}
+    .back-link{{display:inline-block;margin-bottom:1.5rem;color:#4b5563;text-decoration:none;font-weight:600;}}
+    .back-link:hover{{text-decoration:underline;}}
+    .user-menu{{display:flex;align-items:center;gap:1.5rem;}}
+    .user-name{{font-weight:600;font-size:0.95rem;color:#f9fafb;}}
+    .logout-btn{{background:transparent;border:1px solid #4b5563;padding:0.4rem 1rem;border-radius:6px;cursor:pointer;font-weight:600;color:#d1d5db;font-size:0.85rem;}}
+    .logout-btn:hover{{background:#374151;color:#fff;}}
+    footer{{text-align:center;padding:2rem;color:#9ca3af;font-size:0.875rem;background:#111827;border-top:1px solid #374151;}}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container header-inner">
+      <a href="/dashboard" class="logo">Muscle<span>Mart</span></a>
+      <div class="user-menu">
+        <span class="user-name">{escaped_display_name} 様</span>
+        <form method="post" action="/logout" style="margin:0;">
+          <button type="submit" class="logout-btn">ログアウト</button>
+        </form>
+      </div>
+    </div>
+  </header>
+  <main class="container">
+    <a href="/dashboard" class="back-link">← ショッピングに戻る</a>
+    <h2>🛒 購入手続き</h2>
+    <div class="card">
+      <h2>注文内容の確認</h2>
+      <div class="item-row">
+        <span class="item-name">{escaped_item}</span>
+        <span class="item-price">{escaped_price}</span>
+      </div>
+      <div class="total-row">
+        <span>合計（税込）</span>
+        <span style="color:#b91c1c;">{escaped_price}</span>
+      </div>
+    </div>
+    <div class="card">
+      <h2>お届け先・お支払い情報</h2>
+      <form method="post" action="/order">
+        <input type="hidden" name="item_name" value="{escaped_item}">
+        <input type="hidden" name="price" value="{escaped_price}">
+        <div class="form-group">
+          <label>お名前</label>
+          <input type="text" name="order_name" placeholder="山田 太郎" required>
+        </div>
+        <div class="form-group">
+          <label>お届け先住所</label>
+          <input type="text" name="address" placeholder="東京都渋谷区〇〇1-2-3" required>
+        </div>
+        <div class="form-group">
+          <label>クレジットカード番号</label>
+          <input type="text" name="card_number" placeholder="1234-5678-9012-3456" required>
+        </div>
+        <button type="submit" class="btn-submit">注文を確定する</button>
+      </form>
+    </div>
+  </main>
+  <footer>&copy; 2026 MuscleMart Inc. All rights reserved.</footer>
+</body>
+</html>"""
+
+
+def order_complete_page(item_name="", display_name=""):
+    escaped_display_name = html.escape(display_name)
+    escaped_item = html.escape(item_name)
+    return f"""<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>注文完了 - MuscleMart</title>
+  <style>
+    :root{{--primary:#ea580c;--bg:#f9fafb;--text:#1f2937;--border:#e5e7eb;}}
+    *{{box-sizing:border-box;}}
+    body{{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}}
+    header{{background:#111827;padding:1rem 0;}}
+    .container{{max-width:700px;margin:0 auto;padding:0 1rem;}}
+    .header-inner{{display:flex;justify-content:space-between;align-items:center;}}
+    .logo{{font-size:1.5rem;font-weight:900;color:#fff;text-decoration:none;letter-spacing:1px;text-transform:uppercase;font-style:italic;}}
+    .logo span{{color:var(--primary);}}
+    main{{padding:4rem 1rem;min-height:calc(100vh - 160px);display:flex;justify-content:center;}}
+    .complete-box{{background:#fff;border:1px solid var(--border);border-radius:8px;padding:3rem 2rem;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.08);max-width:500px;width:100%;border-top:5px solid #16a34a;}}
+    .icon{{font-size:4rem;margin-bottom:1rem;}}
+    h2{{font-size:1.6rem;color:#111827;margin:0 0 1rem;}}
+    p{{color:#4b5563;line-height:1.7;margin-bottom:1.5rem;}}
+    .order-item{{background:#f3f4f6;border-radius:6px;padding:1rem;margin-bottom:1.5rem;font-weight:700;color:#111827;}}
+    .btn-back{{display:inline-block;background:var(--primary);color:#fff;padding:0.85rem 2rem;border-radius:6px;text-decoration:none;font-weight:800;font-size:1rem;}}
+    .user-menu{{display:flex;align-items:center;gap:1.5rem;}}
+    .user-name{{font-weight:600;font-size:0.95rem;color:#f9fafb;}}
+    .logout-btn{{background:transparent;border:1px solid #4b5563;padding:0.4rem 1rem;border-radius:6px;cursor:pointer;font-weight:600;color:#d1d5db;font-size:0.85rem;}}
+    .logout-btn:hover{{background:#374151;color:#fff;}}
+    footer{{text-align:center;padding:2rem;color:#9ca3af;font-size:0.875rem;background:#111827;border-top:1px solid #374151;}}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container header-inner">
+      <a href="/dashboard" class="logo">Muscle<span>Mart</span></a>
+      <div class="user-menu">
+        <span class="user-name">{escaped_display_name} 様</span>
+        <form method="post" action="/logout" style="margin:0;">
+          <button type="submit" class="logout-btn">ログアウト</button>
+        </form>
+      </div>
+    </div>
+  </header>
+  <main class="container">
+    <div class="complete-box">
+      <div class="icon">✅</div>
+      <h2>ご注文が完了しました！</h2>
+      <div class="order-item">📦 {escaped_item}</div>
+      <p>ご注文ありがとうございます、{escaped_display_name} 様。<br>
+      ご登録のメールアドレス宛に注文確認メールをお送りしました。<br>
+      商品は3〜5営業日以内にお届けします。</p>
+      <a href="/dashboard" class="btn-back">ショッピングを続ける</a>
+    </div>
+  </main>
+  <footer>&copy; 2026 MuscleMart Inc. All rights reserved.</footer>
+</body>
+</html>"""
+
+
+def admin_sales_page(display_name=""):
+    escaped_display_name = html.escape(display_name)
+    return f"""<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>売上レポート - MuscleMart 管理者</title>
+  <style>
+    :root{{--primary:#ea580c;--admin-color:#dc2626;--bg:#f9fafb;--text:#1f2937;--border:#e5e7eb;}}
+    *{{box-sizing:border-box;}}
+    body{{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}}
+    header{{background:#111827;padding:1rem 0;}}
+    .container{{max-width:1000px;margin:0 auto;padding:0 1rem;}}
+    .header-inner{{display:flex;justify-content:space-between;align-items:center;}}
+    .logo{{font-size:1.5rem;font-weight:900;color:#fff;text-decoration:none;letter-spacing:1px;text-transform:uppercase;font-style:italic;}}
+    .logo span{{color:var(--primary);}}
+    main{{padding:2.5rem 1rem;min-height:calc(100vh - 160px);}}
+    .admin-banner{{background:#fef2f2;border-left:4px solid var(--admin-color);color:#991b1b;padding:1rem 1.2rem;margin-bottom:2rem;border-radius:4px;font-size:0.95rem;font-weight:bold;}}
+    .back-link{{display:inline-block;margin-bottom:1rem;color:#4b5563;text-decoration:none;font-weight:600;}}
+    .back-link:hover{{text-decoration:underline;}}
+    .stats-grid{{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1.2rem;margin-bottom:2rem;}}
+    .stat-card{{background:#fff;border:1px solid var(--border);border-radius:8px;padding:1.2rem 1.5rem;box-shadow:0 2px 4px rgba(0,0,0,0.05);}}
+    .stat-label{{font-size:0.85rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.5rem;}}
+    .stat-value{{font-size:1.6rem;font-weight:800;color:#111827;}}
+    .stat-sub{{font-size:0.8rem;color:#16a34a;font-weight:600;margin-top:0.3rem;}}
+    .section-title{{font-size:1.2rem;font-weight:800;color:#111827;margin:2rem 0 1rem;}}
+    .db-table-wrapper{{background:#fff;border:1px solid var(--border);border-radius:8px;overflow:hidden;box-shadow:0 2px 4px rgba(0,0,0,0.05);margin-bottom:2rem;}}
+    table{{width:100%;border-collapse:collapse;text-align:left;}}
+    th,td{{padding:0.9rem 1rem;border-bottom:1px solid var(--border);}}
+    th{{background:#f3f4f6;font-weight:700;color:#374151;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;}}
+    tr:last-child td{{border-bottom:none;}}
+    tr:hover td{{background:#f9fafb;}}
+    .badge{{display:inline-block;padding:3px 8px;border-radius:4px;font-size:0.8rem;font-weight:700;}}
+    .badge-green{{background:#dcfce7;color:#15803d;}}
+    .badge-orange{{background:#fff7ed;color:#c2410c;}}
+    .bar-wrap{{background:#e5e7eb;border-radius:4px;height:8px;width:120px;display:inline-block;vertical-align:middle;}}
+    .bar{{background:var(--primary);border-radius:4px;height:8px;}}
+    .logout-btn{{background:transparent;border:1px solid #4b5563;padding:0.4rem 1rem;border-radius:6px;cursor:pointer;font-weight:600;color:#d1d5db;font-size:0.85rem;}}
+    .logout-btn:hover{{background:#374151;color:#fff;}}
+    .user-menu{{display:flex;align-items:center;gap:1.5rem;}}
+    .user-name{{font-weight:600;font-size:0.95rem;color:#f9fafb;}}
+    footer{{text-align:center;padding:2rem;color:#9ca3af;font-size:0.875rem;background:#111827;border-top:1px solid #374151;}}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container header-inner">
+      <a href="/dashboard" class="logo">Muscle<span>Mart</span></a>
+      <div class="user-menu">
+        <span class="user-name">{escaped_display_name} 様</span>
+        <form method="post" action="/logout" style="margin:0;">
+          <button type="submit" class="logout-btn">ログアウト</button>
+        </form>
+      </div>
+    </div>
+  </header>
+  <main class="container">
+    <a href="/dashboard" class="back-link">← ダッシュボードへ戻る</a>
+    <div class="admin-banner">
+      【管理者専用】売上レポート — 本日 2026/06/26 のデータを表示しています。
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">本日の売上高</div>
+        <div class="stat-value">¥2,450,000</div>
+        <div class="stat-sub">▲ 前日比 +12.4%</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">本日の注文数</div>
+        <div class="stat-value">187 件</div>
+        <div class="stat-sub">▲ 前日比 +8.1%</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">月間売上高</div>
+        <div class="stat-value">¥38,200,000</div>
+        <div class="stat-sub">▲ 先月比 +5.2%</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">新規会員数（今月）</div>
+        <div class="stat-value">342 名</div>
+        <div class="stat-sub">▲ 先月比 +18.9%</div>
+      </div>
+    </div>
+
+    <div class="section-title">📊 カテゴリ別売上内訳</div>
+    <div class="db-table-wrapper">
+      <table>
+        <thead>
+          <tr><th>カテゴリ</th><th>売上高</th><th>注文数</th><th>構成比</th><th>売上グラフ</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>プロテイン・サプリ</td>
+            <td>¥1,102,500</td>
+            <td>98 件</td>
+            <td><span class="badge badge-green">45.0%</span></td>
+            <td><div class="bar-wrap"><div class="bar" style="width:100%;"></div></div></td>
+          </tr>
+          <tr>
+            <td>ダンベル・バーベル</td>
+            <td>¥784,000</td>
+            <td>42 件</td>
+            <td><span class="badge badge-green">32.0%</span></td>
+            <td><div class="bar-wrap"><div class="bar" style="width:71%;"></div></div></td>
+          </tr>
+          <tr>
+            <td>トレーニングマシン</td>
+            <td>¥445,500</td>
+            <td>12 件</td>
+            <td><span class="badge badge-orange">18.2%</span></td>
+            <td><div class="bar-wrap"><div class="bar" style="width:40%;"></div></div></td>
+          </tr>
+          <tr>
+            <td>アクセサリー</td>
+            <td>¥118,000</td>
+            <td>35 件</td>
+            <td><span class="badge badge-orange">4.8%</span></td>
+            <td><div class="bar-wrap"><div class="bar" style="width:11%;"></div></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section-title">🏆 本日の売上トップ商品</div>
+    <div class="db-table-wrapper">
+      <table>
+        <thead>
+          <tr><th>順位</th><th>商品名</th><th>単価</th><th>販売数</th><th>売上合計</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1位</td><td>ホエイプロテイン WPI 1kg (ダブルリッチチョコレート味)</td><td>¥4,980</td><td>62 個</td><td>¥308,760</td></tr>
+          <tr><td>2位</td><td>アジャスタブルダンベル 32kg × 2個セット</td><td>¥34,800</td><td>18 セット</td><td>¥626,400</td></tr>
+          <tr><td>3位</td><td>本革パワーグリップ PRO</td><td>¥6,500</td><td>35 個</td><td>¥227,500</td></tr>
+          <tr><td>4位</td><td>ハーフラック スタンダードモデル (耐荷重300kg)</td><td>¥89,000</td><td>8 台</td><td>¥712,000</td></tr>
+          <tr><td>5位</td><td>EAAアミノ酸ドリンク 500g (レモン味)</td><td>¥3,280</td><td>55 個</td><td>¥180,400</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+  <footer>&copy; 2026 MuscleMart Inc. All rights reserved.</footer>
+</body>
+</html>"""
+
+
+def admin_inventory_page(display_name=""):
+    escaped_display_name = html.escape(display_name)
+    return f"""<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>在庫管理アラート - MuscleMart 管理者</title>
+  <style>
+    :root{{--primary:#ea580c;--admin-color:#dc2626;--bg:#f9fafb;--text:#1f2937;--border:#e5e7eb;}}
+    *{{box-sizing:border-box;}}
+    body{{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}}
+    header{{background:#111827;padding:1rem 0;}}
+    .container{{max-width:1000px;margin:0 auto;padding:0 1rem;}}
+    .header-inner{{display:flex;justify-content:space-between;align-items:center;}}
+    .logo{{font-size:1.5rem;font-weight:900;color:#fff;text-decoration:none;letter-spacing:1px;text-transform:uppercase;font-style:italic;}}
+    .logo span{{color:var(--primary);}}
+    main{{padding:2.5rem 1rem;min-height:calc(100vh - 160px);}}
+    .admin-banner{{background:#fef2f2;border-left:4px solid var(--admin-color);color:#991b1b;padding:1rem 1.2rem;margin-bottom:2rem;border-radius:4px;font-size:0.95rem;font-weight:bold;}}
+    .alert-banner{{background:#fff7ed;border-left:4px solid #ea580c;color:#9a3412;padding:1rem 1.2rem;margin-bottom:2rem;border-radius:4px;font-size:0.95rem;font-weight:bold;}}
+    .back-link{{display:inline-block;margin-bottom:1rem;color:#4b5563;text-decoration:none;font-weight:600;}}
+    .back-link:hover{{text-decoration:underline;}}
+    .section-title{{font-size:1.2rem;font-weight:800;color:#111827;margin:2rem 0 1rem;}}
+    .db-table-wrapper{{background:#fff;border:1px solid var(--border);border-radius:8px;overflow:hidden;box-shadow:0 2px 4px rgba(0,0,0,0.05);margin-bottom:2rem;}}
+    table{{width:100%;border-collapse:collapse;text-align:left;}}
+    th,td{{padding:0.9rem 1rem;border-bottom:1px solid var(--border);}}
+    th{{background:#f3f4f6;font-weight:700;color:#374151;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.05em;}}
+    tr:last-child td{{border-bottom:none;}}
+    tr:hover td{{background:#f9fafb;}}
+    tr.row-danger{{background:#fef2f2;}}
+    tr.row-warning{{background:#fff7ed;}}
+    .badge{{display:inline-block;padding:3px 8px;border-radius:4px;font-size:0.8rem;font-weight:700;}}
+    .badge-red{{background:#fecaca;color:#b91c1c;}}
+    .badge-orange{{background:#fed7aa;color:#c2410c;}}
+    .badge-green{{background:#dcfce7;color:#15803d;}}
+    .stock-bar-wrap{{background:#e5e7eb;border-radius:4px;height:8px;width:100px;display:inline-block;vertical-align:middle;margin-right:8px;}}
+    .stock-bar{{border-radius:4px;height:8px;}}
+    .bar-red{{background:#ef4444;}}
+    .bar-orange{{background:#f97316;}}
+    .bar-green{{background:#22c55e;}}
+    .logout-btn{{background:transparent;border:1px solid #4b5563;padding:0.4rem 1rem;border-radius:6px;cursor:pointer;font-weight:600;color:#d1d5db;font-size:0.85rem;}}
+    .logout-btn:hover{{background:#374151;color:#fff;}}
+    .user-menu{{display:flex;align-items:center;gap:1.5rem;}}
+    .user-name{{font-weight:600;font-size:0.95rem;color:#f9fafb;}}
+    footer{{text-align:center;padding:2rem;color:#9ca3af;font-size:0.875rem;background:#111827;border-top:1px solid #374151;}}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container header-inner">
+      <a href="/dashboard" class="logo">Muscle<span>Mart</span></a>
+      <div class="user-menu">
+        <span class="user-name">{escaped_display_name} 様</span>
+        <form method="post" action="/logout" style="margin:0;">
+          <button type="submit" class="logout-btn">ログアウト</button>
+        </form>
+      </div>
+    </div>
+  </header>
+  <main class="container">
+    <a href="/dashboard" class="back-link">← ダッシュボードへ戻る</a>
+    <div class="admin-banner">
+      【管理者専用】在庫管理アラート — 在庫数が閾値を下回った商品を強調表示しています。
+    </div>
+    <div class="alert-banner">
+      ⚠️ 緊急アラート: 2商品が在庫切れ危険水域です。至急発注を検討してください。
+    </div>
+
+    <div class="section-title">🚨 要発注アラート商品</div>
+    <div class="db-table-wrapper">
+      <table>
+        <thead>
+          <tr><th>商品名</th><th>カテゴリ</th><th>現在庫数</th><th>発注点</th><th>状態</th></tr>
+        </thead>
+        <tbody>
+          <tr class="row-danger">
+            <td>アジャスタブルダンベル 32kg × 2個セット</td>
+            <td>ダンベル・バーベル</td>
+            <td><div class="stock-bar-wrap"><div class="stock-bar bar-red" style="width:9%;"></div></div>3 セット</td>
+            <td>10 セット</td>
+            <td><span class="badge badge-red">🔴 緊急発注</span></td>
+          </tr>
+          <tr class="row-danger">
+            <td>ハーフラック スタンダードモデル (耐荷重300kg)</td>
+            <td>トレーニングマシン</td>
+            <td><div class="stock-bar-wrap"><div class="stock-bar bar-red" style="width:14%;"></div></div>1 台</td>
+            <td>5 台</td>
+            <td><span class="badge badge-red">🔴 緊急発注</span></td>
+          </tr>
+          <tr class="row-warning">
+            <td>ホエイプロテイン WPI 1kg (ダブルリッチチョコレート味)</td>
+            <td>プロテイン・サプリ</td>
+            <td><div class="stock-bar-wrap"><div class="stock-bar bar-orange" style="width:36%;"></div></div>36 個</td>
+            <td>50 個</td>
+            <td><span class="badge badge-orange">🟠 発注推奨</span></td>
+          </tr>
+          <tr class="row-warning">
+            <td>EAAアミノ酸ドリンク 500g (レモン味)</td>
+            <td>プロテイン・サプリ</td>
+            <td><div class="stock-bar-wrap"><div class="stock-bar bar-orange" style="width:44%;"></div></div>22 個</td>
+            <td>30 個</td>
+            <td><span class="badge badge-orange">🟠 発注推奨</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section-title">📦 全商品在庫一覧</div>
+    <div class="db-table-wrapper">
+      <table>
+        <thead>
+          <tr><th>商品名</th><th>カテゴリ</th><th>在庫数</th><th>状態</th></tr>
+        </thead>
+        <tbody>
+          <tr class="row-danger">
+            <td>アジャスタブルダンベル 32kg × 2個セット</td>
+            <td>ダンベル・バーベル</td>
+            <td>3 セット</td>
+            <td><span class="badge badge-red">🔴 緊急発注</span></td>
+          </tr>
+          <tr class="row-danger">
+            <td>ハーフラック スタンダードモデル (耐荷重300kg)</td>
+            <td>トレーニングマシン</td>
+            <td>1 台</td>
+            <td><span class="badge badge-red">🔴 緊急発注</span></td>
+          </tr>
+          <tr class="row-warning">
+            <td>ホエイプロテイン WPI 1kg (ダブルリッチチョコレート味)</td>
+            <td>プロテイン・サプリ</td>
+            <td>36 個</td>
+            <td><span class="badge badge-orange">🟠 発注推奨</span></td>
+          </tr>
+          <tr class="row-warning">
+            <td>EAAアミノ酸ドリンク 500g (レモン味)</td>
+            <td>プロテイン・サプリ</td>
+            <td>22 個</td>
+            <td><span class="badge badge-orange">🟠 発注推奨</span></td>
+          </tr>
+          <tr>
+            <td>本革パワーグリップ PRO</td>
+            <td>アクセサリー</td>
+            <td>128 個</td>
+            <td><span class="badge badge-green">🟢 在庫充足</span></td>
+          </tr>
+          <tr>
+            <td>クレアチンモノハイドレート 500g</td>
+            <td>プロテイン・サプリ</td>
+            <td>94 個</td>
+            <td><span class="badge badge-green">🟢 在庫充足</span></td>
+          </tr>
+          <tr>
+            <td>ラバーコーティングダンベル 10kg ペア</td>
+            <td>ダンベル・バーベル</td>
+            <td>55 セット</td>
+            <td><span class="badge badge-green">🟢 在庫充足</span></td>
+          </tr>
+          <tr>
+            <td>トレーニングベルト Lサイズ</td>
+            <td>アクセサリー</td>
+            <td>76 個</td>
+            <td><span class="badge badge-green">🟢 在庫充足</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+  <footer>&copy; 2026 MuscleMart Inc. All rights reserved.</footer>
+</body>
+</html>"""
+
+
 def get_logged_in_user(headers):
     cookie_header = headers.get("Cookie", "")
     cookie = SimpleCookie()
@@ -718,6 +1187,35 @@ class Handler(BaseHTTPRequestHandler):
             self.respond(admin_db_page(users_data, user["display_name"]))
             return
 
+        if self.path.startswith("/cart"):
+            user = get_logged_in_user(self.headers)
+            if not user:
+                self.redirect("/")
+                return
+            from urllib.parse import urlparse, parse_qs as _parse_qs
+            parsed = urlparse(self.path)
+            params = _parse_qs(parsed.query)
+            item_name = params.get("item", [""])[0]
+            price = params.get("price", [""])[0]
+            self.respond(cart_page(item_name, price, user["display_name"]))
+            return
+
+        if self.path == "/admin/sales":
+            user = get_logged_in_user(self.headers)
+            if not user or user["username"] != "admin":
+                self.send_error(403, "Forbidden: 管理者権限が必要です。")
+                return
+            self.respond(admin_sales_page(user["display_name"]))
+            return
+
+        if self.path == "/admin/inventory":
+            user = get_logged_in_user(self.headers)
+            if not user or user["username"] != "admin":
+                self.send_error(403, "Forbidden: 管理者権限が必要です。")
+                return
+            self.respond(admin_inventory_page(user["display_name"]))
+            return
+
         if self.path != "/":
             self.send_error(404)
             return
@@ -725,6 +1223,18 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self):
         if self.path == "/logout":
             self.redirect("/", clear_cookie=True)
+            return
+
+        if self.path == "/order":
+            user = get_logged_in_user(self.headers)
+            if not user:
+                self.redirect("/")
+                return
+            length = int(self.headers.get("Content-Length", "0"))
+            raw_body = self.rfile.read(length).decode("utf-8")
+            form = parse_qs(raw_body)
+            item_name = form.get("item_name", [""])[0]
+            self.respond(order_complete_page(item_name, user["display_name"]))
             return
 
         if self.path != "/login":
