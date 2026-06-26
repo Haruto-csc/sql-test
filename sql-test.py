@@ -203,7 +203,7 @@ def page(message="", username="", status=""):
         </div>
         <div class="form-group">
           <label for="password">パスワード</label>
-          <input type="password" id="password" name="password" required>
+          <input type="text" id="password" name="password" required autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
         </div>
         <button type="submit">ログイン</button>
       </form>
